@@ -165,7 +165,8 @@ if (commandExists('claude')) {
     args.map((arg) => (arg.startsWith('JIRA_TOKEN=') ? 'JIRA_TOKEN=***' : /\s/.test(arg) ? `"${arg}"` : arg));
   // Replace an earlier registration, if there is one.
   const removeArgs = ['mcp', 'remove', SERVER_NAME, '--scope', 'user'];
-  spawnSync('claude', removeArgs, { stdio: 'ignore', shell: isWindows });
+  // Passed as one string: Node 24+ warns about separate args combined with shell: true.
+  spawnSync(['claude', ...removeArgs].join(' '), { stdio: 'ignore', shell: true });
   const addArgs = ['mcp', 'add', SERVER_NAME, '--scope', 'user', ...envArgs, '--', 'node', serverPath];
   run('claude', addArgs, { display: display(addArgs) });
 } else {
