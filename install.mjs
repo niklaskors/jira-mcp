@@ -166,7 +166,7 @@ if (commandExists('claude')) {
   // Replace an earlier registration, if there is one.
   const removeArgs = ['mcp', 'remove', SERVER_NAME, '--scope', 'user'];
   // Passed as one string: Node 24+ warns about separate args combined with shell: true.
-  spawnSync(['claude', ...removeArgs].join(' '), { stdio: 'ignore', shell: true });
+  if (!dryRun) spawnSync(['claude', ...removeArgs].join(' '), { stdio: 'ignore', shell: true });
   const addArgs = ['mcp', 'add', SERVER_NAME, '--scope', 'user', ...envArgs, '--', 'node', serverPath];
   run('claude', addArgs, { display: display(addArgs) });
 } else {
