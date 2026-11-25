@@ -12,28 +12,39 @@ Copied from `functional-services/.github/mcp/shared/jira-mcp`, where the origina
 
 ## Install
 
+Works on macOS, Linux and Windows.
+
 ```bash
-git clone <this repo> ~/Developer/jira-mcp
-cd ~/Developer/jira-mcp
-npm install
+git clone https://github.com/niklaskors/jira-mcp
+cd jira-mcp
+node install.mjs
 ```
 
-## Add to Claude Code
+The installer:
 
-Available in every project (user scope):
+1. runs `npm install`;
+2. asks for your Jira token and the optional defaults below, then checks the token against Jira (this needs VPN);
+3. registers the server as `jira-onprem` in Claude Code, available in every project (it replaces an earlier registration);
+4. optionally adds it to VS Code's user `mcp.json`, for GitHub Copilot.
+
+Run it again to change the token or the defaults. `node install.mjs --dry-run` shows what it would do
+without changing anything. Answers can also be preset as environment variables (`JIRA_TOKEN`, `JIRA_PROJECT`, ...).
+
+Then run `/mcp` in Claude Code to check that `jira-onprem` is connected.
+
+### Manual setup
+
+Claude Code:
 
 ```bash
+npm install
 claude mcp add jira-onprem --scope user \
   -e JIRA_TOKEN=<your-token> \
   -e JIRA_PROJECT=<default project key, optional> \
-  -- node ~/Developer/jira-mcp/src/jira-mcp.mts
+  -- node /absolute/path/to/jira-mcp/src/jira-mcp.mts
 ```
 
-Check it with `claude mcp get jira-onprem`, or with `/mcp` inside Claude Code.
-
-## Add to VS Code (Copilot)
-
-In `~/Library/Application Support/Code/User/mcp.json`:
+VS Code (`~/Library/Application Support/Code/User/mcp.json` on macOS, `%APPDATA%\Code\User\mcp.json` on Windows):
 
 ```json
 {
@@ -41,7 +52,7 @@ In `~/Library/Application Support/Code/User/mcp.json`:
     "jira-onprem": {
       "type": "stdio",
       "command": "node",
-      "args": ["/Users/<you>/Developer/jira-mcp/src/jira-mcp.mts"],
+      "args": ["/absolute/path/to/jira-mcp/src/jira-mcp.mts"],
       "env": { "JIRA_TOKEN": "<your-token>" }
     }
   }
